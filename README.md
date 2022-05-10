@@ -33,4 +33,40 @@
   - 指定范围，获取范围内的所有类
   - 遍历所有类，获取被注解标记的类并加载进容器里
 - 实现容器
+  - 单例模式
+    - 确保一个类只有一个实例，并对外提供统一访问方式
+      - 饿汉模式：类被加载的时候就立即初始化并创建唯一实例（线程安全）
+      - 懒汉模式：在被客户端首次调用的时候才创建唯一实例（线程不安全，需要加入双重检查锁机制确保线程安全）
+    - 通过编写代码发现，现有的单例模式并不安全，构造函数私有化可以被java的反射机制轻松破坏。
+    - 装备了枚举的饿汉模式能抵御反射与序列化的攻击，满足容器需求
+    ```java
+    //实现能抵挡反射与序列化攻击的安全的单例模式--饿汉模式
+    public class EnumStarvingSingleton {
+        //构造私有
+        private EnumStarvingSingleton(){
+            
+        }
+    
+        //提供返回统一对象方法
+        public static EnumStarvingSingleton getInstance() {
+            
+        }
+        
+        private enum ContainerHolder{
+            HOLDER;
+            private EnumStarvingSingleton instance;
+            ContainerHolder() {
+                instance = new EnumStarvingSingleton();
+            }   
+        }
+    }
+      ```
+    - 使用单例模式创建容器
+      - 保存Class对象及其实例的载体
+      - 容器的加载
+        - 配置的管理与获取
+        - 获取指定范围内的Class对象
+        - 依据配置提前Class对象，连同实例一并放入容器
+      - 容器的操作方式
 - 依赖注入
+- 

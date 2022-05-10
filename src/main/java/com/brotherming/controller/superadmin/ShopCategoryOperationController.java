@@ -3,6 +3,7 @@ package com.brotherming.controller.superadmin;
 import com.brotherming.entity.ShopCategory;
 import com.brotherming.entity.dto.Result;
 import com.brotherming.service.solo.ShopCategoryService;
+import org.simpleframework.core.annotation.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import java.util.List;
  * @author brotherming
  * @createTime 2022年05月09日 17:05:00
  */
+@Controller
 public class ShopCategoryOperationController {
 
     private ShopCategoryService shopCategoryService;

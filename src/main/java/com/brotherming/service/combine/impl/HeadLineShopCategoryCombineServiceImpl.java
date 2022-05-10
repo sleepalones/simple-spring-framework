@@ -5,11 +5,13 @@ import com.brotherming.entity.dto.Result;
 import com.brotherming.service.combine.HeadLineShopCategoryCombineService;
 import com.brotherming.service.solo.HeadLineService;
 import com.brotherming.service.solo.ShopCategoryService;
+import org.simpleframework.core.annotation.Service;
 
 /**
  * @author brotherming
  * @createTime 2022年05月09日 16:34:00
  */
+@Service
 public class HeadLineShopCategoryCombineServiceImpl implements HeadLineShopCategoryCombineService {
 
     private HeadLineService headLineService;
