@@ -6,6 +6,7 @@ import com.brotherming.service.combine.HeadLineShopCategoryCombineService;
 import com.brotherming.service.solo.HeadLineService;
 import com.brotherming.service.solo.ShopCategoryService;
 import org.simpleframework.core.annotation.Service;
+import org.simpleframework.inject.annotation.Autowired;
 
 /**
  * @author brotherming
@@ -14,8 +15,10 @@ import org.simpleframework.core.annotation.Service;
 @Service
 public class HeadLineShopCategoryCombineServiceImpl implements HeadLineShopCategoryCombineService {
 
+    @Autowired
     private HeadLineService headLineService;
 
+    @Autowired
     private ShopCategoryService shopCategoryService;
 
     @Override
