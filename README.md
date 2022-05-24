@@ -80,3 +80,127 @@
     - 实现创建被注解标记的成员变量实例，并将其注入到成员变量里
     - 依赖注入的使用
     - 仅支持成员变量的注入
+## SpringIoC的源码解析
+- 基本流程
+  - 解析读取配置文件
+  - 定位和注册对象到容器中（Resource,BeanDefinition）
+  - 依赖注入对象
+- Spring解决了什么问题？
+  - 将对象之间的关系转而用配置来管理
+    - 依赖注入---依赖关系在Spring的IoC容器中管理
+    - 通过把对象包装在Bean中以达到管理对象和进行额外操作的目的
+    - Bean的本质就是java对象，只是这个对象的生命周期由容器来管理
+    - 不需要为了创建Bean而在原来的java类上添加任何额外的限制，最小侵入
+    - 对java对象的控制方式体现在配置上
+- Bean 与 BeanDefinition
+  - Spring 通过把对象包装在Bean中以达到管理对象和进行额外操作的目的
+  - Bean的本质就是Java对象，Spring根据配置，生成用来描述Bean的BeanDefinition（JDK中使用 Class 来描述对象）
+  - BeanDefinition常用属性：
+    - 作用范围scope（@Scope）
+    - 懒加载lazy-init（@Lazy）：决定Bean实例是否延迟加载
+    - 首选primary（@Primary）：设置为true的bean会是优先的实现类
+    - factory-bean和factory-method（@Configuration和@Bean）
+- BeanFactory---简单容器
+  - Bean主要功能：
+    - 表面上只有 getBean
+    - 实际上控制反转、基本的依赖注入、直至 Bean 的生命周期的各种功能，都由它的实现类提供
+  - BeanFactory和FactoryBean的区别？
+    - BeanFactory是提供了IOC容器最基本的形式，给具体的IOC容器的实现提供了规范，FactoryBean可以说为IOC容器中Bean的实现提供了更加灵活的方式，FactoryBean在IOC容器的基础上给Bean的实现加上了一个简单工厂模式和装饰模式，我们可以在getObject()方法中灵活配置。
+    - 他们两个都是个工厂，但FactoryBean本质上还是一个Bean，也归BeanFactory管理
+    - BeanFactory是Spring容器的顶层接口，FactoryBean更类似于用户自定义的工厂接口
+  - ListableBeanFactory
+    - 以列表的形式提供相关信息
+    - 主要用来查看工厂生产的实例的信息
+  - AutowireCapableBeanFactory
+    - 自动装配相关的接口
+  - DefaultListableBeanFactory
+    - 真正可以独立运行的IOC容器
+    - 对外提供注册能力
+- ApplicationContext---高级容器
+  - ApplicationContext组合并扩展了BeanFactory的功能：
+    - 包括国际化（MessageSource）
+    - 通配符方式获取一组Resource资源
+    - 整合Environment环境、
+    - 事件发布与监听事件解耦（ApplicationEventPublisher），事件发送等
+  - 传统的基于XML配置的经典容器：
+    - FileSystemXmlApplicationContext：从文件系统加载配置
+    - ClassPathXmlApplicationContext：从classpath加载配置
+    - XmlWebApplicationContext：用于Web应用程序的容器
+  - 基于注解的容器：
+    - AnnotationConfigServletWebServerApplicationContext（Web应用的容器，属于SpringBoot）
+    - AnnotationConfigReactiveWebServerApplicationContext（响应式容器，属于SpringBoot）
+    - AnnotationConfigApplicationContext（普通的非Web容器，属于Spring）
+  - 以上容器的共性：refresh()方法，IOC容器的启动
+    - 容器初始化、配置解析
+    - BeanFactoryPostProcessor和BeanPostProcessor的注册和激活
+    - 国际化配置等
+- Resource接口
+  - 在java中资源会被抽象成URL，通过解析URL的协议来处理不同资源的操作逻辑
+  - Spring将对物理资源的访问方式抽象为Resource
+  - 常用实现类：
+    - ServletContextResource---访问web容器上下文中的资源
+    - ClassPathResource---访问类加载路径下的资源
+    - FileSystemResource---访问文件系统资源
+  - 根据资源地址自动选择正确的Resource
+    - 自动识别“classpath:”、”file:“等资源地址前缀
+    - 支持自动解析Ant风格带通配符的资源地址
+    - ResourceLoader
+      - 实现不同的Resource加载策略，按需返回特定类型的Resource
+      - 它的方法只支持单个Resource的返回
+    - ResourcePatternResolver
+      - 用于根据通配符返回多个Resource对象
+- BeanDefinitionReader
+  - 利用ResourceLoader和ResourcePatternResolver将配置信息解析成一个个BeanDefinition
+  - 借助BeanDefinitionRegistry接口将BeanDefinition注册到容器中
+  - BeanDefinitionRegistry负责对BeanDefinition的注册，即将beanName和beanName的实例作为键值放到ConcurrentHashMap中
+- 后置处理器 PostProcessor
+  - 本身也是一种需要注册到容器里的Bean
+  - 其里面的方法会在特定的时机被容器调用
+  - 实现不改变容器或者Bean核心逻辑的情况下对Bean进行扩展（例如框架的整合---mybatis）
+  - 对Bean进行包装，影响其行为、修改Bean的内容等
+  - PostProcessor 的种类
+    - 容器的后置处理器
+      - BeanDefinitionRegistryPostProcessor
+      - BeanFactoryPostProcessor
+    - Bean的后置处理器
+      - BeanPostProcessor（Bean被创建出来后，可以通过该后置处理器对bean进行包装，例如AOP）
+- Aware
+  - 在Bean中设置对容器的感知
+  - 从Bean里获取到的容器实例并对其进行操作
+- 事件监听者模式
+  - 监听器将监听感兴趣的事件，一旦事件发生，便做出响应
+    - 事件源（Event Source）
+    - 事件监听器（Event Listener）
+    - 事件对象（Event Object）
+  - Spring的事件驱动模型
+    - 事件驱动模型的三大组成部分
+      - 事件：ApplicationEven抽象类
+      - 事件监听器：ApplicationListener
+      - 事件发布器：Publisher以及Multicaster
+- 依赖注入
+  - AbstractBeanFactory
+    - doGetBean
+      - 获取Bean实例
+  - DefaultSingletonRegistry
+    - getSingleton
+      - 获取单例实例
+    - 三级缓存
+      - 解决循环依赖
+  - AbstractAutowireCapableBeanFactory
+    - createBean
+      - 创建Bean实例的准备
+    - doCreateBean
+      - 创建Bean实例
+    - applyMergedBeanDefinitionPostProcessors
+      - 处理@Autowried以及@Value
+    - populateBean
+      - 给Bean实例注入属性值（依赖注入）
+  - AutowiredAnnotationBeanPostProcessor
+    - postProcessProperties
+      - Autowired的依赖注入逻辑
+  - DefaultListableBeanFactory
+    - doResolveDependency
+      - 依赖解析
+  - DependencyDescriptor
+    - InjectionPoint
+      - 创建依赖实例
