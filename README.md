@@ -204,3 +204,43 @@
   - DependencyDescriptor
     - InjectionPoint
       - 创建依赖实例
+## Spring AOP 的实现
+- AOP 相关术语
+  - 切面Aspect：将横切关注点逻辑进行模块化封装的实体对象
+  - 通知Advice：好比是Class里面的方法，还定义了织入逻辑的时机
+  - 连接点Joinpoint，允许使用Advice的地方
+  - SpringAOP默认只支持方法级别的Joinpoint
+  - 切入点Pointcut：定义一系列规则对Joinpoint进行筛选
+  - 目标对象Target：符合Pointcut条件，要被织入横切逻辑的对象
+- Advice 的种类
+  - BeforeAdvice：在JoinPoint前被执行的Advice
+  - AfterAdvice：好比try..catch..finaly里面的finaly
+  - AfterReturningAdvice：在Joinpoint执行流程正常返回后被执行
+  - AfterThrowingAdvice：Joinpoint执行过程中抛出异常才会触发
+  - AroundAdvice：在Joinpoint前和后都执行，最常用的Advice
+  - Introduction-引入型Advice：
+    - 为目标类引入新接口，而不需要目标类做任何实现
+    - 使得目标类在使用的过程中转型成新接口对象，调用新接口的方法
+- SpringAOP的实现原理
+  - 代理模式
+    - 静态代理
+    - 动态代理
+      - JDK 动态代理
+        - 基于反射机制实现，要求业务类必须实现接口
+        - 程序运行时动态生成类的字节码，并加载到JVM中
+        - 要求”被代理的类“必须实现接口
+        - 并不要求”代理对象“去实现接口，所以可以复用代理对象的逻辑
+      - CGLIB 动态代理：
+        - 不需要业务类实现接口，相对灵活
+        - 内部主要封装了ASM java字节码操控框架
+- 实现自研框架的AOP
+  - 使用CGLIB来实现：不需要业务类实现接口，相对灵活
+    - 解决标记的问题，定义横切逻辑的骨架
+      - 定义与横切逻辑相关的注解
+      - 定义供外部使用的横切逻辑骨架
+      - 定义Aspect横切逻辑以及被代理方法的执行顺序
+        - 创建MethodInterceptor的实现类
+        - 定义必要的成员变量--被代理的类以及Aspect列表
+        - 按照Order对Aspect进行排序
+        - 实现对横切逻辑以及被代理对象方法的定序执行
+      - 将横切逻辑织入到被代理的对象以生成动态代理对象
