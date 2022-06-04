@@ -17,7 +17,7 @@ import java.util.List;
 @Controller
 public class HeadLineOperationController {
 
-    @Autowired
+    @Autowired(value = "HeadLineServiceImpl")
     private HeadLineService headLineService;
 
     public Result<Boolean> addHeadLine(HttpServletRequest req, HttpServletResponse resp) {

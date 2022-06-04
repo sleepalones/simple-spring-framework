@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * @author brotherming
+ * @author brotherming 往被代理的类添加横切逻辑
  * @createTime 2022年05月24日 17:51:00
  */
 public class AspectListExecutor implements MethodInterceptor {
