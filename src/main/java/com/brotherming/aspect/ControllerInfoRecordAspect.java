@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.simpleframework.aop.annotation.Aspect;
 import org.simpleframework.aop.annotation.Order;
 import org.simpleframework.aop.aspect.DefaultAspect;
-import org.simpleframework.core.annotation.Controller;
 
 import java.lang.reflect.Method;
 
@@ -13,7 +12,7 @@ import java.lang.reflect.Method;
  * @createTime 2022年06月01日 22:44:00
  */
 @Slf4j
-@Aspect(value = Controller.class)
+@Aspect(pointcut = "within(com.brotherming.controller.superadmin.*)")
 @Order(10)
 public class ControllerInfoRecordAspect extends DefaultAspect {
 

@@ -35,10 +35,11 @@ public class AspectListExecutor implements MethodInterceptor {
 
     @Override
     public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-        if (CollUtil.isEmpty(sortAspectInfoList)) {
-            return null;
-        }
         Object returnValue = null;
+        collectAccurateMatchedAspectList(method);
+        if (CollUtil.isEmpty(sortAspectInfoList)) {
+            return methodProxy.invokeSuper(proxy,args);
+        }
         //1.按照order的顺序升序执行完所有Aspect的before方法
         invokeBeforeAdvices(method,args);
         try {
@@ -51,6 +52,10 @@ public class AspectListExecutor implements MethodInterceptor {
             invokeAfterThrowingAdvices(method,args,e);
         }
         return returnValue;
+    }
+
+    private void collectAccurateMatchedAspectList(Method method) {
+        sortAspectInfoList.removeIf(next -> !next.getPointcutLocator().accurateMatches(method));
     }
 
     //按照order的顺序升序执行完所有Aspect的before方法
