@@ -16,7 +16,7 @@ public class DependencyInjectorTests {
         //初始化容器
         BeanContainer beanContainer = BeanContainer.getInstance();
         //扫描注解标记的bean，并放入容器
-        beanContainer.loadBean("com.brotherming");
+        beanContainer.loadBeans("com.brotherming");
         MainPageController mainPageController = (MainPageController) beanContainer.getBean(MainPageController.class);
         new DependencyInjector().doIoc();
     }

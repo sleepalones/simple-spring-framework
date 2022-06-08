@@ -19,7 +19,7 @@ public class BeanContainerTests {
     @Test
     public void test() {
         //扫描该包下被自定义注解标记的所有类
-        beanContainer.loadBean("com.brotherming");
+        beanContainer.loadBeans("com.brotherming");
         Set<Class<?>> classes = beanContainer.getClasses();
         Set<Object> beans = beanContainer.getBeans();
         Set<Class<?>> classesByAnnotation = beanContainer.getClassesByAnnotation(Controller.class);

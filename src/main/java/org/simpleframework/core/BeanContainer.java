@@ -69,7 +69,7 @@ public class BeanContainer {
     /**
      * 扫描加载所有Bean
      */
-    public synchronized void loadBean(String packageName) {
+    public synchronized void loadBeans(String packageName) {
         if (isLoaded()) {
             log.warn("BeanContainer has been loaded.");
             return;

@@ -15,12 +15,11 @@ public class AspectWeaverTest {
     @Test
     public void doAopTest() {
         BeanContainer beanContainer = BeanContainer.getInstance();
-        beanContainer.loadBean("com.brotherming");
+        beanContainer.loadBeans("com.brotherming");
         AspectWeaver aspectWeaver = new AspectWeaver();
         aspectWeaver.doAop();
         DependencyInjector dependencyInjector = new DependencyInjector();
         dependencyInjector.doIoc();
         HeadLineOperationController headLineOperationController = (HeadLineOperationController) beanContainer.getBean(HeadLineOperationController.class);
-        headLineOperationController.addHeadLine(null,null);
     }
 }

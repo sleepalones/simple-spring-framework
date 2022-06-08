@@ -253,3 +253,17 @@
     - 提供了完整的AOP解决方案，是AOP的java实现版本
     - 定义切面语法以及语法的解析机制
     - 提供了强大的织入工具
+- ## MVC
+- 将 DisPatcherServlet 移植到核心代码区
+- 在 DisPatcherServlet init()方法中
+  - 初始化 IOC 容器
+  - 完成 AOP 织入
+  - 完成依赖注入
+  - 初始化请求处理器责任链
+- 在 DisPatcherServlet service()方法中
+  - 创建责任链对象实例
+  - 通过责任链模式来依次调用请求处理器对请求进行处理
+    - 针对特定请求，选择匹配的Controller方法进行处理
+    - 解析请求里的参数及其对应的值，并赋值给Controller方法参数
+    - 选择合适的Render，为后续请求处理结果的渲染做准备
+  - 对处理结果进行渲染
